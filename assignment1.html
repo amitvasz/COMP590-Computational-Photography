@@ -50,18 +50,92 @@
 
 <p>My first implementation was successful, but used Matlab's <code>imregister</code> function. I will discuss this implementation in brief and save the discussion of most details for the description of my second implementation.</p>
 
-<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment%201/assignment1.m"></script>
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment1/assignment1.m"></script>
+<p>
+    <strong>Method</strong>
+    <ol>
+        <li>
+            I begin by dividing the picture into 3 sepearate frames by finding the height of the original image, dividing by 3, and taking the floor of the result. I take subranges of the original image that are this new height tall and the original width.
+        </li>
+        <li>
+            Next, I use Matlab's <code>imregister</code> function to align both the blue and green channels to the red channel. I found that the <code>'Similarity'</code> mode of imregister delivered the most consistent results.
+        </li>
+        <li>
+            Finaly, I combine all 3 channels into a single 3d matrix and display it as the color image.
+        </li>
+    </ol>
+    <strong>Results</strong>
+    <li>
+        <br>
+        <img src="assignment1/01044v.jpg" width = "25%">
+        <img src="assignment1/result1_v1.jpg" width = "70%">
+    </li>
+    <li>
+        <br>
+        <img src="assignment1/00889v.jpg" width = "25%">
+        <img src="assignment1/result3_v1.jpg" width = "70%">
+    </li>
+</p>
 
 
 <h3>
-<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Secondary Implementation</h3>
+<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Second Implementation</h3>
 
-<p>implementation with ssd. show plots and varying results</p>
+<p>After learning that we were supposed to implement the image registration ourselves at lecture on Wednesday, I rewrote my solution. The code for my solution and my implementation of sum of squared differences are embedded below.</p>
+<p>
+    <strong>Solution Version 2</strong>
+</p>
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment1/assignment1_v2.m"></script>
+<p>
+    <strong>SSD Implementation</strong>
+</p>
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment1/ssd.m"></script>
+
+
+<p>
+    <strong>Method</strong>
+    <ol>
+        <li>
+            Like I did in my frist implementation, I began by seperating the given image into its red, green, and blue frames.
+        </li>
+        <li>
+            Next, I begin the allignment process by cropping the red frame in by 25 pixels on all sides in order to get a more accurate measure of allignemnt. I then find the proper allignement of the blue frame to the red frame by iterating through translations from -12 pixels to +12 pixels in both the x and y direction. At each translation, I calculate the SSD and add the results to an array. The minimum value represents the optimal placement. Plots will be included below with each result. The green channel is then alligned in the same way.
+        </li>
+        <li>
+            Finaly, I combine all 3 properly cropped channels into a single 3d matrix and display it as the color image.
+        </li>
+    </ol>
+    <strong>Results</strong>
+    <li>
+        <br>
+        <img src="assignment1/01044v.jpg" width = "25%">
+        <img src="assignment1/result1_v2.jpg" width = "70%">
+        <img src="assignment1/v2_ssd_trees_green.jpg" width = "45%">
+        <img src="assignment1/v2_ssd_trees_blue.jpg" width = "45%">
+        <p>
+            The plot for allignment of the green and blue channel appear on the left and right respectively.
+        </p>
+    </li>
+    <li>
+        <br>
+        <img src="assignment1/00889v.jpg" width = "25%">
+        <img src="assignment1/result2_v2.jpg" width = "70%">
+        <img src="assignment1/v2_ssd_castle_green.jpg" width = "45%">
+        <img src="assignment1/v2_ssd_castle_blue.jpg" width = "45%">
+        <p>
+            The plot for allignment of the green and blue channel appear on the left and right respectively.
+        </p>
+
+    </li>
+</p>
 
 <h3>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h3>
 
-<p>wrap everything up</p>
+<p>I achieved the greatest success using the built in <code>imregister</code> function in my first implementation. Using it in <code>'affine'</code> mode accounted for rotation and performed best on more complicated images (i.e. an image with many logs on a river). However, <code>'Similarity'</code> delivered the most consistent results in the sense that it delivered passable results over the widest range of images. This method was also significantly better performance wise and took much less time to execute than my second implementation.</p>
+<p>
+    I also achieved success implemennting registration myself. In some cases (such as the photograph of the road in the forrest) my implementation achieved better results than <code>imregister</code> In other cases (like the image of the castle), one channel remained slightly misalligned. I suspect that this occasional missalignment is due to SSD being used to find optimal allignment.
+</p>
 
 </section>
     </div>

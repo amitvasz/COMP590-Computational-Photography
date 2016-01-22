@@ -1,6 +1,7 @@
 I = imread('00889v.jpg'); %load image
-%%% how to load images found by google: http://www.mathworks.com/help/matlab/import_export/importing-images.html
-heightOfFrame = floor(size(I, 1) / 3); %automaticly get height of each negative
+
+%automaticly get height of each negative
+heightOfFrame = floor(size(I, 1) / 3);
 widthOfFrame = size(I, 2);
 
 %seperate image into different channels
@@ -26,7 +27,7 @@ for dx = -12:12
         i = i+1;
     end
 end
-%find optimum offsets and crop
+%find optimum offsets and crop blue channel
 figure, scatter3(x_cords, y_cords, z_cords);
 [m, min_index] = min(z_cords);
 dx = x_cords(min_index);
@@ -48,29 +49,20 @@ for dx = -12:12
         i = i+1;
     end
 end
-%find optimum offsets and crop
+%find optimum offsets and crop green channel
 figure, scatter3(x_cords, y_cords, z_cords);
 [m, min_index] = min(z_cords);
 dx = x_cords(min_index);
 dy = y_cords(min_index);
 cropped_green = green((25+dy):heightOfFrame-25+dy, 25+dx:widthOfFrame-25+dx);
 
+%display color image
 mergedImage = cat(3,cropped_red,cropped_green,cropped_blue);
-
-%display image
-%%from sample code
 figure, imagesc(mergedImage);
 axis image;
-figure, imagesc(cropped_red);
-axis image;
-figure, imagesc(cropped_green);
-axis image;
-figure, imagesc(cropped_blue);
-axis image;
-
 
 %write the image
-%imwrite(mergedImage,'result1_v1.tif','quality',100);
+imwrite(mergedImage,'result2_v2.jpg','quality',100);
 
 
 
