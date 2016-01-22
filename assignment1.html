@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Comp590-computational-photography : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Comp590-computational-photography</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dstantwo/COMP590-Computational-Photography">View on GitHub</a>
+
+          <h1 id="project_title"><a href="http://dstantwo.github.io/COMP590-Computational-Photography/">COMP 590 Computational Photography</a></h1>
+          <h2 id="project_tagline">Assignment 1 Writeup</h2>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Method</h3>
+
+<p>The goal in this assignment was to create a single color image from a strip of three gray-scale images, each of which was taken with either a red, green, or blue filter.</p>
+<p>
+    The high level methodology for achieving this involved 3 main steps:
+    <ol>
+        <li>
+            Divide the original strip of three frames into three seperate images.
+        </li>
+        <li>
+            Find the optimal translation on each frame to achieve a proper allignment of all three frames.
+        </li>
+        <li>
+            Combine the translated red, green, and blue frames to form a single color image.
+        </li>
+    </ol>
+</p>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Initial Implementation</h3>
+
+<p>My first implementation was successful, but used Matlab's <code>imregister</code> function. I will discuss this implementation in brief and save the discussion of most details for the description of my second implementation.</p>
+
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment1/assignment1.m"></script>
+<p>
+    <strong>Method</strong>
+    <ol>
+        <li>
+            I begin by dividing the picture into 3 sepearate frames by finding the height of the original image, dividing by 3, and taking the floor of the result. I take subranges of the original image that are this new height tall and the original width.
+        </li>
+        <li>
+            Next, I use Matlab's <code>imregister</code> function to align both the blue and green channels to the red channel. I found that the <code>'Similarity'</code> mode of imregister delivered the most consistent results.
+        </li>
+        <li>
+            Finaly, I combine all 3 channels into a single 3d matrix and display it as the color image.
+        </li>
+    </ol>
+    <strong>Results</strong>
+    <li>
+        <br>
+        <img src="assignment1/01044v.jpg" width = "25%">
+        <img src="assignment1/result1_v1.jpg" width = "70%">
+    </li>
+    <li>
+        <br>
+        <img src="assignment1/00889v.jpg" width = "25%">
+        <img src="assignment1/result3_v1.jpg" width = "70%">
+    </li>
+</p>
+
+
+<h3>
+<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Second Implementation</h3>
+
+<p>After learning that we were supposed to implement the image registration ourselves at lecture on Wednesday, I rewrote my solution. The code for my solution and my implementation of sum of squared differences are embedded below.</p>
+<p>
+    <strong>Solution Version 2</strong>
+</p>
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment1/assignment1_v2.m"></script>
+<p>
+    <strong>SSD Implementation</strong>
+</p>
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment1/ssd.m"></script>
+
+
+<p>
+    <strong>Method</strong>
+    <ol>
+        <li>
+            Like I did in my frist implementation, I began by seperating the given image into its red, green, and blue frames.
+        </li>
+        <li>
+            Next, I begin the allignment process by cropping the red frame in by 25 pixels on all sides in order to get a more accurate measure of allignemnt. I then find the proper allignement of the blue frame to the red frame by iterating through translations from -12 pixels to +12 pixels in both the x and y direction. At each translation, I calculate the SSD and add the results to an array. The minimum value represents the optimal placement. Plots will be included below with each result. The green channel is then alligned in the same way.
+        </li>
+        <li>
+            Finaly, I combine all 3 properly cropped channels into a single 3d matrix and display it as the color image.
+        </li>
+    </ol>
+    <strong>Results</strong>
+    <li>
+        <br>
+        <img src="assignment1/01044v.jpg" width = "25%">
+        <img src="assignment1/result1_v2.jpg" width = "70%">
+        <img src="assignment1/v2_ssd_trees_green.jpg" width = "45%">
+        <img src="assignment1/v2_ssd_trees_blue.jpg" width = "45%">
+        <p>
+            The plot for allignment of the green and blue channel appear on the left and right respectively.
+        </p>
+    </li>
+    <li>
+        <br>
+        <img src="assignment1/00889v.jpg" width = "25%">
+        <img src="assignment1/result2_v2.jpg" width = "70%">
+        <img src="assignment1/v2_ssd_castle_green.jpg" width = "45%">
+        <img src="assignment1/v2_ssd_castle_blue.jpg" width = "45%">
+        <p>
+            The plot for allignment of the green and blue channel appear on the left and right respectively.
+        </p>
+
+    </li>
+</p>
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h3>
+
+<p>I achieved the greatest success using the built in <code>imregister</code> function in my first implementation. Using it in <code>'affine'</code> mode accounted for rotation and performed best on more complicated images (i.e. an image with many logs on a river). However, <code>'Similarity'</code> delivered the most consistent results in the sense that it delivered passable results over the widest range of images. This method was also significantly better performance wise and took much less time to execute than my second implementation.</p>
+<p>
+    I also achieved success implemennting registration myself. In some cases (such as the photograph of the road in the forrest) my implementation achieved better results than <code>imregister</code> In other cases (like the image of the castle), one channel remained slightly misalligned. I suspect that this occasional missalignment is due to SSD being used to find optimal allignment.
+</p>
+
+</section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Comp590-computational-photography maintained by <a href="https://github.com/dstantwo">dstantwo</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
+
+  </body>
+</html>
