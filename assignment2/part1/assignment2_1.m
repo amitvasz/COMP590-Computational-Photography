@@ -25,7 +25,7 @@ for y = 1:imh-1
        A(e, im2var(y,x+1))=1; 
        A(e, im2var(y,x))=-1; 
        b(e) = source_img(y,x+1)-source_img(y,x);
-       %objective1 : horizontal constraints
+       %objective1 : vertical constraints
        e=e+1;
        A(e, im2var(y+1,x))=1; 
        A(e, im2var(y,x))=-1; 
