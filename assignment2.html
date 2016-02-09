@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Comp590-computational-photography : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Comp590-computational-photography</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dstantwo/COMP590-Computational-Photography">View on GitHub</a>
+
+          <h1 id="project_title"><a href="http://dstantwo.github.io/COMP590-Computational-Photography/">COMP 590 Computational Photography</a></h1>
+          <h2 id="project_tagline">Assignment 2 Writeup</h2>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Method</h3>
+
+<p>The goal in this assignment was to implement gradient domain processing with a toy example - reconstructing a grayscale image.</p>
+<p>
+    The high level methodology for achieving this involved 3 main steps and the equations:
+    <uL>
+        <li>
+            <code>Av - b = 0</code> or <code>Av = b</code>
+        </li>
+        <li>
+            <code>minimize (v(x+1,y)-v(x,y) - (s(x+1,y)-s(x,y)))^2 </code>
+        </li>
+        <li>
+            <code>minimize (v(x,y+1)-v(x,y) - (s(x,y+1)-s(x,y)))^2</code>
+        </li>
+    </uL>
+    <ol>
+        <li>
+            Construct a constraint matrix <code>A</code> where each row represents either <code>v(x+1,y)-v(x,y)</code> or <code>v(x,y+1)-v(x,y)</code>
+        </li>
+        <li>
+            Construct a vector <code>b</code> where each row is either <code>s(x+1,y)-s(x,y)</code> or <code>s(x,y+1)-s(x,y)</code>, and corresponds to the same row in <code>A</code>.
+        </li>
+        <li>
+            Solve for the vector <code>v</code>, which will be the pixel values in the final image that most closely conform to the gradient constraints laid out in <code>A</code> and <code>b</code>.
+        </li>
+    </ol>
+</p>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementation</h3>
+
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment2/part1/assignment2_1.m"></script>
+<p>
+    <strong>Method</strong>
+    <ol>
+        <li>
+            After loading the source image, I begin by creatng a mapping each pixel to a variable number where the variable number of pixel at y,x = im2var(y,x).
+        </li>
+        <li>
+            Next, I initialize the matrix <code>A</code> and vector <code>b</code> with appropriate demesions and values of 0.
+        </li>
+        <li>
+            I then iterate through each pixel in the final image and add a vertical and horizontal gradient constraint for that pixel with respect to the source image. These constraints populate <code>A</code> and <code>b</code>.
+        </li>
+        <li>
+            Next I add a final constraint which adds the correct constant value to <code>v</code>.
+        </li>
+        <li>
+            Finally, I solve for <code>v</code> using <code>v = A\b</code> and reshape into the final image.
+        </li>
+    </ol>
+    <strong>Results</strong>
+    <li>
+        <br>
+        <img src="assignment2/part1/source.jpg" width = "45%">
+        <img src="assignment2/part1/result.jpg" width = "45%">
+        <br>
+        <p>
+            The source image (left) and the resulting image (right)
+        </p>
+    </li>
+
+</p>
+
+
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h3>
+
+<p>
+    I achieved the desired result of recerating the source image. After understanding the relation between <img src="http://acberg.com/comp_photog/optimization.jpg" height="40"> and the three equations:
+    <uL>
+        <li>
+            <code>Av - b = 0</code> or <code>Av = b</code>
+        </li>
+        <li>
+            <code>minimize (v(x+1,y)-v(x,y) - (s(x+1,y)-s(x,y)))^2 </code>
+        </li>
+        <li>
+            <code>minimize (v(x,y+1)-v(x,y) - (s(x,y+1)-s(x,y)))^2</code>
+        </li>
+    </uL>
+    implementation was relatively simple.
+</p>
+
+</section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Comp590-computational-photography maintained by <a href="https://github.com/dstantwo">dstantwo</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
+
+  </body>
+</html>
