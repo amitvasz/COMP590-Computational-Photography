@@ -26,8 +26,10 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>
-<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Method</h3>
+
+ <h2><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toy Problem</h2>
+
+<h3><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Method</h3>
 
 <p>The goal in this assignment was to implement gradient domain processing with a toy example - reconstructing a grayscale image.</p>
 <p>
@@ -59,7 +61,7 @@
 <h3>
 <a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementation</h3>
 
-<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment2/part1/assignment2_1.m"></script>
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment2/part1/assignment2_1_toy.m"></script>
 <p>
     <strong>Method</strong>
     <ol>
@@ -111,6 +113,111 @@
         </li>
     </uL>
     implementation was relatively simple.
+</p>
+
+
+
+
+
+
+
+
+<h2><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Main Assignment</h2>
+
+<h3><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Method</h3>
+
+<p>The goal in this assignment was to compost two different images in matlab using simple cloning, alpha blending, and gradient domain blending</p>
+<p>
+   The high level methodology for achieving this involved 3 main steps:
+   <ol>
+       <li>
+           Construct a binary alpha mask and copy the pixels from the source image where the mask is 1 onto the target image.
+       </li>
+       <li>
+          Smooth the mask and do the same thing.
+       </li>
+       <li>
+           Enlarge the binary mask achieve blending through gradient domain blending insted of alpha blending.
+       </li>
+   </ol>
+</p>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementation</h3>
+
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment2/part1/assignment2_1.m"></script>
+<p>
+   <strong>Method</strong>
+   <ol>
+       <li>
+           After creating a binary alpha mask and then a feathered alpha mask in photoshop, implementing both of the alpha mask based cloning solutions was just a matter of iterating through each pixel in each color channel of the final image and referenceing the value of the mask at the same location to determine which pixel (source or target or wighted average) went there.
+       </li>
+       <li>
+           For this implementation of gradient domain blending, I referenced the walk through slides about gradient domain editing from James Hays at Brown. These had a good description of how to implement the Laplacian, which I used insted of the constraints outlined in the toy problem.
+       </li>
+   </ol>
+   <h4>Results</h4>
+   <li>
+       <strong>Binary Alpha Mask</strong>
+       <br>
+       <img src="assignment2/part1/moon_source.png" width = "45%">
+       <img src="assignment2/part1/penguin_source.png" width = "45%">
+       <img src="assignment2/part1/binary_mask.png" width = "45%">
+       <img src="assignment2/part1/cloned_image_large.jpg" width = "45%">
+       <br>
+       <p>
+           From upper left to lower right: The target image, the source image, the binary alpha mask, and the cloned image.
+       </p>
+   </li>
+   <li>
+       <strong>Alpha Mask Blending</strong>
+       <br>
+       <img src="assignment2/part1/moon_source.png" width = "45%">
+       <img src="assignment2/part1/penguin_source.png" width = "45%">
+       <img src="assignment2/part1/mask_feathered.png" width = "45%">
+       <img src="assignment2/part1/alpha_blend_image_large.jpg" width = "45%">
+       <br>
+       <p>
+           From upper left to lower right: The target image, the source image, the fethered alpha mask, and the cloned image.
+       </p>
+   </li>
+   <li>
+       <strong>Gradient Domain Blending</strong>
+       <br>
+       <img src="assignment2/part1/moon_source.png" width = "45%">
+       <img src="assignment2/part1/penguin_source.png" width = "45%">
+       <img src="assignment2/part1/binary_mask.png" width = "45%">
+       <img src="assignment2/part1/seamless_cloning_large_v1.jpg" width = "45%">
+       <br>
+       <p>
+           From upper left to lower right: The target image, the source image, the binary alpha mask, and the cloned image.
+       </p>
+   </li>
+   <li>
+       <strong>Gradient Domain Blending with Tighter Mask</strong>
+       <br>
+       <img src="assignment2/part1/moon_source.png" width = "45%">
+       <img src="assignment2/part1/penguin_source.png" width = "45%">
+       <img src="assignment2/part1/mask_feathered.png" width = "45%">
+       <img src="assignment2/part1/seamless_cloning_large.jpg" width = "45%">
+       <br>
+       <p>
+           From upper left to lower right: The target image, the source image, the alpha mask, and the cloned image.
+       </p>
+       <p>
+           NOTE: In order to use the feathered mask as a tighter binary mask in this implementation, I conditioned the population of matrix <code>A</code> and vector <code>b</code> on whether the value at <code>mask_feathered(y,x)</code> was greater than 0.5. By doing this, I was able to treat this feathered mask as a binary alpha mask.
+       </p>
+   </li>
+
+</p>
+
+
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h3>
+
+<p>
+   All methods of composting were successful with varying degrees of smoothness. I believe the best result to be from using gradient domain blending with a tight mask. In both examples of gradient domain blending, the penguin is perhaps slightly too dark. However, this eems to be a consequence of the lighting in the moon picture rather than an implementation failure. The alpha mask blending example also achieved fairly good results, but could have been improved with a more refined mask.
 </p>
 
 </section>
