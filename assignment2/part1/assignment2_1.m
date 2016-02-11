@@ -13,7 +13,7 @@ im2var = zeros(imh, imw);
 im2var(1:imh*imw) = 1:imh*imw;
 
 %create matrix A & vector b
-A = zeros(2*(imh-1)*(imw-1)+1, (imh-1)*(imw-1));
+A = sparse(2*(imh-1)*(imw-1)+1, (imh-1)*(imw-1));
 b = zeros(2*(imh-1)*(imw-1)+1, 1);
 
 %iterate through each pixel
@@ -40,7 +40,6 @@ A(e, im2var(1,1))=1;
 b(e)=source_img(1,1); 
 
 %solve for v in Av-b = 0
-A = sparse(A);
 v = A\b;
 
 %copy each solved value to the appropriate pixel in the output image
