@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Comp590-computational-photography : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Comp590-computational-photography</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dstantwo/COMP590-Computational-Photography">View on GitHub</a>
+
+          <h1 id="project_title"><a href="http://dstantwo.github.io/COMP590-Computational-Photography/">COMP 590 Computational Photography</a></h1>
+          <h2 id="project_tagline">Assignment 3 Writeup</h2>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+ <h2><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Panorama Stitching</h2>
+
+<h3><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Method</h3>
+
+<p>The goal in this assignment was to manually select corresponding points from two images that form a panorama. From these points, we use homogoenous coordinates and the definition of cross product to solve for a homography matrix. We then apply the homography matrix to the images using <code>imtransform</code>. </p>
+<p>
+    The high level methodology for achieving this involved 3 main steps:
+    <ol>
+        <li>
+            Manually select correspondence points <code>(x<sub>i</sub>, y<sub>i</sub>) and (u<sub>v</sub>, x<sub>i</sub>)</code> from each image.
+        </li>
+        <li>
+            Construct a 3x3 homography matrix <code>H</code> based on the equation:
+            <ul>
+                <li>
+                    <img src="assignment3/CodeCogsEqn.gif">
+                </li>
+                <li>
+                    From this, we find the cross product to be: <br> <img src="assignment3/CodeCogsEqn copy.gif">
+                </li>
+                <li>
+                    Next, we rewrite this as <br> <img src="assignment3/CodeCogsEqn (1).gif">
+                </li>
+                <li>
+                    Finally, we construct <code>M</code>, use the matlab <code>\</code> operater to solve for the <code>h</code> vector, and reshape the <code>h</code> vector into a 3x3 <code>H</code> matrix.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Apply the <code>H</code> matrix to the two input images.
+        </li>
+    </ol>
+</p>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementation</h3>
+
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment3/assignment3.m"></script>
+<p>
+    <strong>Method</strong>
+    <ol>
+        <li>
+            After loading the two source images, I begin by prompting the user for points in each image. I organize the points from each image into an <code>nx2</code> matrix.
+        </li>
+        <li>
+            Next, I call a function <code>calculateH(points1, points2)</code>. I will discuss its implementation later.
+        </li>
+        <li>
+            The final step is to apply the <code>H</code> matrix to the images by transforming <code>H</code> into a <code>tform</code> structure using <code>T = maketform('projective', inv(H))</code> and then use <code>imtransform</code>.
+            <ul>
+                <li>
+                    After working on this step for several days, I was unable to achieve a proper transformation. Using <code>H</code> and <code>inv(H)</code> both yielded similar results:
+                    <ul>
+                        <li>
+                            <code>
+                                H = calculateH(points1, points2);<br>
+                                T = maketform('projective', inv(H));<br>
+                                image2_transformed = imtransform(image2, T);
+                            </code><br>
+                            Yields an image that is 2x2 pixels.
+
+                        </li>
+                        <li>
+                            <code>
+                                H = calculateH(points1, points2);<br>
+                                T = maketform('projective', inv(H));<br>
+
+                                % obtain x and y data<br>
+                                [~, x_data, y_data] = imtransform(image2, T, 'XYScale', 1);<br>
+
+                                % update x/y data from the bounds<br>
+                                x_data = [min(1, x_data(1)), max(size(image1,2), x_data(2))];<br>
+                                y_data = [min(1, y_data(1)), max(size(image1,1), y_data(2))];<br>
+
+                                image2_transformed = imtransform(image1, T, 'XData', x_data, 'YData', y_data);<br>
+                                figure, imagesc(image2_transformed);<br>
+                                axis image;
+                            </code><br>
+                            Yields an image that is entirely black, but one that is the correct size.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+
+    </ol>
+    <strong>Results</strong>
+    <li>
+        The following images are calibration images made in paint. They are crops of the same image, so the Homography matrix shoud be a lateral translation.
+        <br>
+        <img src="assignment3/left1.jpg" width = "45%">
+        <img src="assignment3/right1.jpg" width = "45%">
+        <br>
+        <p>
+            The homography matrix is as follows and it does indicate a lateral translation.
+        </p>
+        <img src="assignment3/CodeCogsEqn copy 3.gif">
+        <p>
+            Attempting to apply the <code>H</code> matrix to the second image yields the following result:
+        </p>
+        <img src="assignment3/black_result.jpg" width = "80%">
+    </li>
+
+</p>
+
+
+
+<h3><a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementation of <code>calculateH</code></h3>
+
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment3/calculateH.m"></script>
+<p>
+    <strong>Method</strong>
+    <p>
+        The method of implementation follows the comments and the description of the mathematical method above.
+    </p>
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h3>
+
+<p>
+    I sucessfully implemented the collection of points from the user and the calculation of the homography matrix <code>H</code>. From calibration images, I have verified that H is calculated correctly.
+</p>
+<p>
+    However, after several days of tinkering, reading documentation, and reading forum posts, I was unable to apply the transform to the images. I chose to turn the assignment in as-is considering that it was already late. That being said, I do plan on continuing to try to get this 100% functional.
+</p>
+
+
+
+
+
+
+
+
+
+
+</section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Comp590-computational-photography maintained by <a href="https://github.com/dstantwo">dstantwo</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
+
+  </body>
+</html>
