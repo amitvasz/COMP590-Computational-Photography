@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Comp590-computational-photography : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Comp590-computational-photography</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dstantwo/COMP590-Computational-Photography">View on GitHub</a>
+
+          <h1 id="project_title"><a href="http://dstantwo.github.io/COMP590-Computational-Photography/">COMP 590 Computational Photography</a></h1>
+          <h2 id="project_tagline">Assignment 4 Writeup</h2>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+
+ <h2><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Panorama Stitching and Blending</h2>
+
+<h3><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Method</h3>
+
+<p>The goal in this assignment was to take multiple photographs with different exposures, combine them into multiple HDR images, and then to build off the code from the previous assignment, in which we calculated a homography matrix, to combine and blend these HDR photographs.</p>
+<p>
+    The high level methodology for achieving this involved 4 main steps:
+    <ol>
+        <li>
+            Combine multiple exposures into HDR images
+        </li>
+        <li>
+            Construct a 3x3 homography matrix <code>H</code> as elaborated upon in the previous assignment.
+        </li>
+        <li>
+            Apply the <code>H</code> matrix to the input images, and do so multiple times in the case that there are more than two images.
+        </li>
+        <li>
+            Blend the transformed images in the panorama together using Gradient Domain Blending.
+        </li>
+    </ol>
+</p>
+
+<h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Implementation</h3>
+
+<script src="http://gist-it.appspot.com/github/dstantwo/COMP590-Computational-Photography/blob/master/assignment4/assignment4.m"></script>
+<p>
+    <strong>Method</strong>
+    <ol>
+        <li>
+            I begin by loading 9 files to create 3 HDR images using matlab's <code>makehdr()</code> function.
+        </li>
+        <li>
+            After loading the source images, I prompt the user for corresponding points in the left image and the center image. I organize the points from each image into an <code>nx2</code> matrix.
+        </li>
+        <li>
+            Next, I call a function <code>calculateH(points1, points2)</code> to calculate the homography matrix and apply the matrix to both images.
+        </li>
+        <li>
+            The next step is to blend the overlapping area of the two images using gradient domain blending. The blending itself is done on a gradient so that the gradients on each side of the overlapping area match their adjacent photos.
+            <ul>
+                <li>
+                    I calculate the x range of the overlapping area by considering the width of the left image and the horizontal tranzlation specified in the homography matrix. This method avoids having to prompt the user for more interaction.
+                </li>
+                <li>
+                    I then implement gradient domain blending in the same way as discussed in assignment 2. However, instead of using an alpha mask to dictate where to blend, I use the x range discussed above.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Finally, I repeat the above 4 steps. The second time through, I use the combined and blended left and center image and the right image instead of the left and center images.
+        </li>
+
+    </ol>
+    <strong>Results</strong>
+    <ul>
+        <li>
+            The following result is composed of just 2 images, but is the clearest example of succesful gradient domain blending.
+            <ul>
+                <li>
+                    These are the two raw images:<br>
+                    <img src="assignment4/left.jpg" width = "45%">
+                    <img src="assignment4/right.jpg" width = "45%">
+                </li>
+                <li>
+                    This is the two images with the homaography matrix applied, but no blending: <br>
+                    <img src="assignment4/whiteboardoverlay.jpg" width = "45%">
+                </li>
+                <li>
+                    Finally, this is the panorama with gradient domain blending:<br>
+                    <img src="assignment4/whiteboardpano.jpg" width = "45%">
+                </li>
+            </ul>
+        </li>
+        <li>
+            This example contains 3 HDR images
+            <ul>
+                <li>
+                    The constituent images are:<br>
+                    <img src="assignment4/Lh.jpg" width = "30%">
+                    <img src="assignment4/Lm.jpg" width = "30%">
+                    <img src="assignment4/Ll.jpg" width = "30%"> <br>
+                    <img src="assignment4/Ch.jpg" width = "30%">
+                    <img src="assignment4/Cm.jpg" width = "30%">
+                    <img src="assignment4/Cl.jpg" width = "30%"> <br>
+                    <img src="assignment4/Rh.jpg" width = "30%">
+                    <img src="assignment4/Rm.jpg" width = "30%">
+                    <img src="assignment4/Rl.jpg" width = "30%">
+                </li>
+                <li>
+                    This is the final result with the 9 raw images comined into 3 HDR images, transformed, and blended.<br>
+                    <img src="assignment4/threephotopano.jpg" width = "100%">
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+</p>
+
+
+
+
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h3>
+
+<p>
+    I have successfully created and blended panoramas from both two and three images. The poor image quality and color of the 3 image panorama is due to <code>makehdr()</code> returning a matrix of single values instead of double or uint8. 
+</p>
+
+
+
+
+
+
+
+
+
+
+
+</section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Comp590-computational-photography maintained by <a href="https://github.com/dstantwo">dstantwo</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
+
+  </body>
+</html>
